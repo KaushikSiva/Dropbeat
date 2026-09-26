@@ -1,20 +1,6 @@
 import XCTest
 final class StudioTests: XCTestCase {
 
-    func testPromptClipboardRoundTrip() {
-        let app = XCUIApplication(); app.launch()
-        let input = app.descendants(matching: .any)["openingIdea"].firstMatch
-        XCTAssertTrue(input.waitForExistence(timeout: 30))
-        let original = input.value as? String
-        XCTAssertNotNil(original)
-        app.buttons["copyPrompt"].tap()
-        input.tap(); input.typeText(" changed")
-        if app.buttons["Done"].exists { app.buttons["Done"].tap() }
-        let paste = app.buttons["pastePrompt"]
-        XCTAssertTrue(paste.waitForExistence(timeout: 5))
-        paste.tap()
-        XCTAssertEqual(input.value as? String, original)
-    }
     func testPreloadedPicturesAndNativeFiles() {
         let app = XCUIApplication(); app.launch()
         XCTAssertTrue(app.buttons["Tiger"].waitForExistence(timeout: 30))

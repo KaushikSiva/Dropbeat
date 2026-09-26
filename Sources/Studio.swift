@@ -22,6 +22,10 @@ struct Picture: Identifiable, Codable {
     @Published var ready = false
     @Published var phase = "stopped"
     @Published var busy = false
+    @Published var canRetry = false
+    @Published var downloading = false
+    private var finishedPath: String?
+    private var completionNote = ""
     @Published var importing = false
     @Published var message = "Connecting to your Mac… Pictures are ready to load."
     @Published var seconds: Double = 0
@@ -69,7 +73,7 @@ struct Picture: Identifiable, Codable {
             }
             if let data = try? Data(contentsOf: folder.appending(path: "library.json")), let saved = try? JSONDecoder().decode([Picture].self, from: data) { pictures += saved }
             let last = URL.documentsDirectory.appending(path: "Music Video.mp4")
-            if FileManager.default.fileExists(atPath: last.path) { output = last }
+            if !UserDefaults.standard.bool(forKey: "unfinishedVideo"), FileManager.default.fileExists(atPath: last.path) { output = last }
         } catch { message = "Could not open your picture library: \(error.localizedDescription)" }
     }
     func image(_ picture: Picture) -> UIImage? { UIImage(contentsOfFile: folder.appending(path: picture.file).path) }
@@ -99,16 +103,22 @@ struct Picture: Identifiable, Codable {
     func command(_ script: String, _ arguments: [String: Any] = [:]) {
         Task {
             do { _ = try await web.callAsyncJavaScript(script, arguments: arguments, in: nil, contentWorld: .page) }
-            catch { message = error.localizedDescription; if cueState == "pending" { rejectCue("Could not send that picture. Try again.") }; if phase == "connecting" { phase = "stopped" } }
+            catch { busy = false; message = error.localizedDescription; if cueState == "pending" { rejectCue("Could not send that picture. Try again.") }; if phase == "connecting" { phase = "stopped" } }
         }
     }
 
     func start() {
         guard ready, !busy, !running, !idea.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        output = nil; canRetry = false; finishedPath = nil; completionNote = "";
+        UserDefaults.standard.set(true, forKey: "unfinishedVideo")
         player?.pause(); player = nil; seconds = 0; cueState = ""; vocalLyrics = ""; activePicture = ""; phase = "connecting"
         command("await window.kriyaNative.start(idea, style)", ["idea": idea, "style": style])
     }
-    func stop() { command("window.kriyaNative.stop()") }
+    func stop() { busy = true; message = "Finishing recording…"; command("window.kriyaNative.stop()") }
+    func retrySong() { canRetry = false; busy = true; message = "Retrying your saved recording…"; command("await window.kriyaNative.retry()") }
+    func retryDownload() { if let finishedPath { Task { await download(finishedPath) } } }
+    var needsDownload: Bool { finishedPath != nil && !downloading && !busy && output == nil }
+
     func steer(_ picture: Picture) {
         guard phase == "playing" else { rejectCue("Start your video first, then tap or drag a picture."); return }
         guard cueState != "pending" else { return }
@@ -151,15 +161,20 @@ struct Picture: Identifiable, Codable {
             }
         }
         if let lines = body["vocalLyrics"] as? [String] { vocalLyrics = lines.joined(separator: "\n") }
+        if let value = body["canRetry"] as? Bool { canRetry = value; if value { output = nil } }
+        if let value = body["completionNote"] as? String { completionNote = value }
         if let value = body["ready"] as? Bool { ready = value }
         if let value = body["phase"] as? String { phase = value }
         if let value = body["busy"] as? Bool { busy = value }
         if let value = body["time"] as? Double { seconds = value }
         if let value = body["message"] as? String { self.message = value }
         if let value = body["error"] as? String { self.message = value; if phase == "connecting" { phase = "stopped" } }
-        if let path = body["finished"] as? String { Task { await download(path) } }
+        if let path = body["finished"] as? String { finishedPath = path; Task { await download(path) } }
     }
     func download(_ path: String) async {
+        guard !downloading else { return }
+        downloading = true; busy = true
+        defer { downloading = false; busy = false }
         guard let url = URL(string: path, relativeTo: URL(string: address))?.absoluteURL else { return }
         do {
             let cookies = await web.configuration.websiteDataStore.httpCookieStore.allCookies()
@@ -169,8 +184,10 @@ struct Picture: Identifiable, Codable {
             let dest = URL.documentsDirectory.appending(path: "Music Video.mp4")
             let data = try Data(contentsOf: temp); try data.write(to: dest, options: .atomic)
             output = dest
-            if !busy { watch() }
-        } catch { message = "Video is saved on your Mac, but downloading failed: \(error.localizedDescription)" }
+            UserDefaults.standard.set(false, forKey: "unfinishedVideo")
+            message = completionNote.isEmpty ? "Saved on this device. Watch your video or export it to Files or Photos." : completionNote + " Saved on this device."
+            watch()
+        } catch { message = "Video is saved on your Mac. Tap Download video to save it on this device." }
     }
     func importMac() async {
         importing = true; defer { importing = false }

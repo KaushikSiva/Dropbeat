@@ -92,7 +92,7 @@ open MusicVideo.xcodeproj
 
 Select **MusicVideo → iPhone Duo → Run**. The scheme starts the included local server automatically after `npm ci`. No sibling Kriya repository is required.
 
-Use the prompt field’s **Paste** and **Copy** controls to enter or reuse your idea. **Photos** and **Files** import into the app's picture library. **From Mac** opens a native Mac picker when running in Simulator. In **Advanced**, the simulator address is `http://127.0.0.1:3211`.
+Use the prompt field’s standard iOS copy/paste menu to enter or reuse your idea. **Photos** and **Files** import into the app's picture library. **From Mac** opens a native Mac picker when running in Simulator. In **Advanced**, the simulator address is `http://127.0.0.1:3211`.
 
 The native app keeps provider credentials on the Mac. To configure them visually, open the browser studio’s **Advanced** panel. RevenueCat is optional for local use. See [setup and troubleshooting](docs/SETUP.md).
 

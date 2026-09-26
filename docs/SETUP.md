@@ -12,7 +12,7 @@ Use Xcode 27.1 with the iOS 27.1 Duo SDK. Run `npm ci` inside `studio` first, th
 
 Stop an existing manually started studio before Xcode starts its simulator instance. You can stop the Xcode-launched process using the PID recorded in `studio/.ios-runtime/server.pid`. Do not kill an unrelated listener to free the port.
 
-The opening prompt supports normal text selection plus visible **Paste** and **Copy** controls. On Simulator, Paste uses the simulator clipboard; copy your text into that clipboard using the simulator’s clipboard synchronization or paste command.
+The opening prompt supports the standard iOS text selection and copy/paste menu. The separate Copy and Paste buttons have been removed.
 
 The only native Advanced setting is the server address. Provider keys can be configured in `studio/.env.local` or the browser studio’s Advanced panel. The default simulator address is `http://127.0.0.1:3211`.
 
@@ -45,7 +45,7 @@ RevenueCat is optional locally. To explore checkout, create a product attached t
 | “From Mac” is unavailable | Launch through Xcode; it enables the simulator-only picker. Browser requests cannot invoke it. |
 | Live generation cannot start | Confirm both provider keys and model access. Check your provider quota. |
 | A drop is accepted but the picture is not visible yet | Acceptance acknowledges the direction. The model may take several moments or fail to depict the requested subject. |
-| Finishing fails after recording | Check song-model access, FFprobe and Blender. Download the saved take before retrying. |
+| Finishing fails after recording | The recording is saved before the song starts. Song generation retries up to three times; **Retry song** resumes the saved take if those attempts fail. If Blender fails, the completed song and video are still delivered. |
 | A provider rejects a song request | Use original characters and original vocals; keep real-person references visual rather than requesting voice imitation. |
 | A Mac import fails | Try Photos or Files. In Simulator, From Mac allows explicit selection without navigating the simulator filesystem. |
 
@@ -62,3 +62,5 @@ npm run build
 ```
 
 In Xcode, Product → Test runs the ordinary UI checks. `testLiveProduction` skips under the MusicVideo scheme. The MusicVideoLive scheme enables that paid provider test; it may run for several minutes. Native file-picker tests require a simulator with the app’s preloaded picture library.
+
+After finishing, wait for **Saved on this device**. **Watch your video** plays the downloaded MP4; **Export video** opens the share sheet for Files or Photos. **Download video** retries a failed transfer. Closing the app preserves the raw take for a later song retry, but interrupts in-progress generation.

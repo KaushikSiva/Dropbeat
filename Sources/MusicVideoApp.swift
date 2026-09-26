@@ -104,7 +104,7 @@ struct StudioView: View {
                 if let output = studio.output {
                     HStack {
                         Button("Watch your video", systemImage: "play.rectangle") { studio.watch() }
-                        ShareLink(item: output) { Label("Save", systemImage: "square.and.arrow.up") }
+                        ShareLink(item: output) { Label("Export video", systemImage: "square.and.arrow.up") }
                     }.disabled(studio.running || studio.busy)
                     HStack {
                         TextField("Want a change? Warmer colours…", text: $edit)
@@ -121,31 +121,19 @@ struct StudioView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Start with an idea").font(.title2.bold())
                     TextField("Describe the opening scene", text: $studio.idea, axis: .vertical).focused($ideaFocused).accessibilityIdentifier("openingIdea").lineLimit(2...4).textFieldStyle(.roundedBorder).disabled(studio.running || studio.busy)
-                    HStack(spacing: 14) {
-                        PasteButton(payloadType: String.self) { values in
-                            guard !values.isEmpty else { return }
-                            studio.idea = values.joined(separator: "\n")
-                            ideaFocused = false
-                        }
-                        .accessibilityLabel("Paste prompt")
-                        .accessibilityIdentifier("pastePrompt")
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
-                        Button("Copy", systemImage: "doc.on.doc") {
-                            UIPasteboard.general.string = studio.idea
-                        }
-                        .accessibilityLabel("Copy prompt")
-                        .accessibilityIdentifier("copyPrompt")
-                        .disabled(studio.idea.isEmpty)
-                    }
-                    .disabled(studio.running || studio.busy)
                     Picker("Sound", selection: $studio.style) {
                         ForEach(["High-energy rap", "Trap", "Electronic", "Cinematic"], id: \.self) { Text($0) }
                     }.pickerStyle(.menu).disabled(studio.running || studio.busy)
                 }
                 Text(studio.message).font(.callout).foregroundStyle(.secondary).accessibilityIdentifier("studioStatus")
+                if studio.canRetry {
+                    Button("Retry song", systemImage: "arrow.clockwise") { studio.retrySong() }.buttonStyle(.borderedProminent).foregroundStyle(.black).disabled(studio.busy)
+                }
+                if studio.needsDownload {
+                    Button("Download video", systemImage: "arrow.down.circle") { studio.retryDownload() }.buttonStyle(.borderedProminent).foregroundStyle(.black)
+                }
                 if studio.running {
-                    Button("Finish video", systemImage: "stop.fill") { studio.stop() }.buttonStyle(.borderedProminent).controlSize(.large).foregroundStyle(.black)
+                    Button("Finish video", systemImage: "stop.fill") { studio.stop() }.buttonStyle(.borderedProminent).controlSize(.large).foregroundStyle(.black).disabled(studio.busy)
                 } else {
                     Button("Start video", systemImage: "play.fill") { studio.start() }
                         .buttonStyle(.borderedProminent).controlSize(.large).foregroundStyle(.black)
