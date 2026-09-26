@@ -25,9 +25,30 @@ Most video tools ask you to describe everything before you see anything. DropBea
 
 The interface stays simple: **one opening idea, your pictures, and a playing video.** Load pictures first; they enter the scene only when you tap or drag them into the video.
 
-![Actual Duo Simulator recording: dragging a picture and receiving acceptance feedback](docs/images/drag-to-direct.gif)
+### Watch a real drag, step by step
 
-*Real simulator capture. “Accepted” means the model received the direction; the visual change follows afterward.*
+1. **Hold a picture** in the library on the right.
+2. **Drag it onto the playing video** on the left. The picture lifts and moves; the video gets a green outline and says **“Drop here to change the scene.”**
+3. **Release and check the feedback.** The app shows **“received”**, then **“accepted”**, and marks the selected picture.
+
+![Real Garry picture drag: the image leaves the library, moves onto the highlighted video, and receives an accepted confirmation](docs/images/drag-to-direct.gif)
+
+*Actual Duo Simulator interactions. The gesture plays at **0.4× speed** so you can follow the moving picture. The wait before acceptance is shortened; both edits are labelled in the clip. No pointer, drag path, or success state has been fabricated.*
+
+| Picture over the drop target | Direction accepted |
+| --- | --- |
+| ![Actual lifted Garry picture over the green video drop target](docs/images/drag-over-video.jpg) | ![Actual Garry Tan accepted message on the video](docs/images/drag-confirmed.jpg) |
+
+<details>
+<summary><strong>Watch another real drag: adding the tiger</strong></summary>
+
+![Actual tiger picture dragged from the library onto the video, followed by acceptance feedback](docs/images/tiger-drag.gif)
+
+Same interaction with a different picture: hold, drag onto the video, release, and wait for acceptance. Gesture playback is slowed; the wait is shortened.
+
+</details>
+
+**“Accepted” confirms that the model received the direction.** It does not promise an immediate visual change or exact likeness. [See the interaction walkthrough and recording notes →](docs/INTERACTIONS.md)
 
 ## One minute, your direction
 
