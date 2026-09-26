@@ -14,7 +14,7 @@ export default function NativeStage() {
     let idea = "", style = "", setting = "", cues: CueEvent[] = [], status: StudioStatus | undefined, exportId = localStorage.getItem("nativeExportId") || "";
     let busy = false;
     let pending: SavedTake | undefined;
-    const failure = (error: unknown) => send({ error: error instanceof Error ? error.message : "Please try again.", busy: false });
+    const failure = (error: unknown) => send({ error: error instanceof Error ? error.message : "Please try again.", busy: false, canRetry: Boolean(pending || localStorage.getItem("nativePendingTake")) });
     const request = async (url: string, init: RequestInit) => {
       const response = await fetch(url, init); const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Could not finish this video."); return result;
@@ -24,7 +24,8 @@ export default function NativeStage() {
       busy = true; send({ busy: true, message: "AI and Blender are polishing your video…" });
       try {
         const result = await request("/create/music-video/api/refine", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: exportId, direction }) });
-        send({ finished: result.url, message: result.summary, busy: false });
+        localStorage.setItem("nativeFinishedURL", result.url);
+        send({ finished: result.url, message: result.summary, completionNote: "", busy: true });
       } catch (e) { failure(e); } finally { busy = false; }
     }
     async function finish(take: SavedTake) {
