@@ -1,0 +1,1 @@
+export async function resolvedAiSettings() { return { openaiApiKey: process.env.OPENAI_API_KEY || "", openaiBaseUrl: process.env.OPENAI_BASE_URL || "https://api.openai.com/v1", openaiLlmModel: process.env.OPENAI_VISION_MODEL || "gpt-4.1-mini" }; }

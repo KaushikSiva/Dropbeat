@@ -1,0 +1,16 @@
+.DS_Store
+.build/
+DerivedData/
+**/xcuserdata/
+*.xcuserstate
+node_modules/
+.next/
+.next-ios/
+.ios-runtime/
+*.tsbuildinfo
+.env*
+!.env.example
+data/
+*.key
+DemoDeliverables/
+*.xcresult

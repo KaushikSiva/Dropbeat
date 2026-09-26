@@ -1,0 +1,16 @@
+name: Feature idea
+description: Suggest a better way to direct music videos.
+title: "[Idea] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What would this let someone do?
+    validations:
+      required: true
+  - type: textarea
+    id: flow
+    attributes:
+      label: How should it feel to use?
+      description: A short example or sketch is welcome.
