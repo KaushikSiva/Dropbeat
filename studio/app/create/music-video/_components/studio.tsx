@@ -17,7 +17,7 @@ export default function MusicVideoStudio() {
   const input = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<StudioStatus>();
   const [phase, setPhase] = useState("stopped"), [elapsed, setElapsed] = useState(0);
-  const [prompt, setPrompt] = useState("A camera skims a midnight ocean, full of energy.");
+  const [prompt, setPrompt] = useState("Create a one-minute, high-energy English rap music video. An original rapper performs on a San Francisco waterfront promenade, with the Golden Gate Bridge behind him in warm morning light. The song celebrates YC founders: bold ideas, building fast, learning from failure, and making something people want. Use punchy drums, deep bass, clever original rhymes, and a catchy “build, launch, repeat” hook. Keep the rapper visible as the camera moves smoothly around him");
   const [style, setStyle] = useState("High-energy rap"), styleRef = useRef("High-energy rap"), promptRef = useRef("");
   const [finalizing, setFinalizing] = useState(false);
   const [refineText, setRefineText] = useState("");

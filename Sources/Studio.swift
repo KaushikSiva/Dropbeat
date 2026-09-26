@@ -27,7 +27,7 @@ struct Picture: Identifiable, Codable {
     @Published var seconds: Double = 0
     @Published var output: URL?
     @Published var player: AVPlayer?
-    @Published var idea = "Glide over a midnight ocean. A fearless journey with huge energy."
+    @Published var idea = "Create a one-minute, high-energy English rap music video. An original rapper performs on a San Francisco waterfront promenade, with the Golden Gate Bridge behind him in warm morning light. The song celebrates YC founders: bold ideas, building fast, learning from failure, and making something people want. Use punchy drums, deep bass, clever original rhymes, and a catchy “build, launch, repeat” hook. Keep the rapper visible as the camera moves smoothly around him"
     @Published var style = "High-energy rap"
     @Published var address = UserDefaults.standard.string(forKey: "server") ?? "http://127.0.0.1:3211"
     let web: WKWebView
